@@ -18,12 +18,15 @@ function ChatInput({ chatId }: Props) {
   const { data: model } = useSWR("model", {
     fallbackData: "gemini-2.0-flash",
   });
-
   const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!prompt) return;
     const input = prompt.trim();
     setPrompt("");
+
+    // Create a custom event to trigger scrolling in the chat component
+    const scrollEvent = new CustomEvent('chatMessageSent');
+    window.dispatchEvent(scrollEvent);
 
     const message: Message = {
       text: input,
@@ -70,28 +73,34 @@ function ChatInput({ chatId }: Props) {
         id: notification,
       });
     });
-  };
-
-  return (
-    <div className="bg-gray-700/50 text-gray-400 rounded-lg text-sm mb-3">
-      <form onSubmit={sendMessage} className="px-5 py-2 space-x-5 flex">
-        <input
-          className="bg-transparent focus:outline-none flex-1 disabled:cursor-not-allowed disabled:text-gray-300"
-          disabled={!session}
-          type="text"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Type your message here..."
-        />
-        <button
-          disabled={!prompt || !session}
-          type="submit"
-          className="bg-gray-900 hover:opacity-50 text-white font-bold px-4 py-2 rounded disabled:bg-gray-500 disabled:cursor-not-allowed"
-        >
-          <PaperAirplaneIcon className="h-4 w-4 -rotate-45" />
-        </button>
-      </form>
-      <div></div>
+  };  return (
+    <div className="mx-auto max-w-3xl w-full mb-4">
+      <div className="bg-[#121212] border border-[#2a2a2a] shadow-lg text-white rounded-xl">
+        <form onSubmit={sendMessage} className="relative">
+          <input
+            className="bg-transparent px-4 py-3.5 focus:outline-none w-full disabled:cursor-not-allowed disabled:text-gray-600 text-sm pr-14"
+            disabled={!session}
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Message ChatAI..."
+          />
+          <button
+            disabled={!prompt || !session}
+            type="submit"
+            className={`absolute right-3 top-1/2 -translate-y-1/2 ${
+              prompt && session
+                ? "bg-[#10a37f] hover:bg-[#0e8e6d]"
+                : "bg-[#1e1e1e] text-gray-500 cursor-not-allowed"
+            } text-white p-2 rounded-lg transition-all duration-200`}
+          >
+            <PaperAirplaneIcon className="h-4 w-4 -rotate-45" />
+          </button>
+        </form>
+        <div className="px-3 pb-3 pt-1 text-xs text-center text-gray-500">
+          ChatAI may produce inaccurate information about people, places, or facts.
+        </div>
+      </div>
     </div>
   );
 }

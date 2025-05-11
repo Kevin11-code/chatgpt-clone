@@ -6,13 +6,16 @@ import { useSession } from "next-auth/react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { db } from "../firebase";
 import Message from "./Message";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   chatId: string;
 };
 
-function Chat({ chatId }: Props) {
-  const { data: session } = useSession();
+function Chat({ chatId }: Props) {  const { data: session } = useSession();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const [messages] = useCollection(
     session &&
@@ -28,20 +31,69 @@ function Chat({ chatId }: Props) {
         orderBy("createdAt", "asc")
       )
   );
-
-  return (
-    <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide">
+  
+  // Scroll to bottom whenever messages change
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+    // Check if we should auto-scroll or show scroll button
+  useEffect(() => {
+    const checkShouldScroll = () => {
+      if (!chatContainerRef.current) return;
+      
+      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      
+      setShowScrollButton(!isNearBottom);
+      
+      // Auto-scroll only if user is already near the bottom
+      if (isNearBottom) {
+        scrollToBottom();
+      }
+    };
+    
+    checkShouldScroll();
+    
+    // Add scroll event listener to show/hide scroll button
+    const container = chatContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', checkShouldScroll);
+      return () => container.removeEventListener('scroll', checkShouldScroll);
+    }
+  }, [messages]);
+  
+  // Listen for message sent event from ChatInput
+  useEffect(() => {
+    const handleMessageSent = () => {
+      scrollToBottom();
+    };
+    
+    window.addEventListener('chatMessageSent', handleMessageSent);
+    return () => window.removeEventListener('chatMessageSent', handleMessageSent);
+  }, []);return (
+    <div ref={chatContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide pt-4 pb-24">
       {messages?.empty && (
-        <>
-          <p className="mt-10 text-center text-white">
-            Type a prompt in below to get started!
+        <div className="flex flex-col items-center justify-center h-full">
+          <p className="text-center text-white text-lg mb-3">
+            Type a prompt below to get started!
           </p>
-          <ArrowDownCircleIcon className="h-10 w-10 mx-auto mt-5 text-white animate-bounce" />
-        </>
+          <ArrowDownCircleIcon className="h-8 w-8 mx-auto text-gray-400 animate-bounce" />
+        </div>
+      )}<div className="max-w-3xl mx-auto px-4">
+        {messages?.docs.map((message) => (
+          <Message key={message.id} message={message.data()} />
+        ))}
+        {/* This empty div serves as our scroll target */}
+        <div ref={messagesEndRef} />
+      </div>      {/* Scroll to bottom button - appears when not at bottom */}
+      {showScrollButton && messages?.docs && messages.docs.length > 2 && (
+        <button
+          onClick={scrollToBottom}
+          className="fixed bottom-24 right-4 bg-[#121212] hover:bg-[#1e1e1e] text-white p-2 rounded-full shadow-lg transition-opacity z-10"
+        >
+          <ArrowDownCircleIcon className="h-6 w-6" />
+        </button>
       )}
-      {messages?.docs.map((message) => (
-        <Message key={message.id} message={message.data()} />
-      ))}
     </div>
   );
 }

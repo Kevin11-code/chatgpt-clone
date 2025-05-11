@@ -6,6 +6,7 @@ import "../styles/globals.css";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
 import Login from "../components/Login";
 import ClientProvider from "../components/ClientProvider";
+import TopBarContainer from "../components/TopBarContainer";
 
 export default async function RootLayout({
   children,
@@ -14,23 +15,26 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession(authOptions);
 
-  console.log(session);
   return (
     <html lang="en">
       <head />
-      <body>
+      <body className="bg-[#0a0a0a]">
         <SessionProvider session={session}>
           {!session ? (
             <Login />
           ) : (
-            <div className="flex">
-              <div className="bg-zinc-900 md:w-[10rem] h-screen overflow-y-auto lg:min-w-[20rem] md:min-w-[15rem] ">
-                <SideBar />
+            <div className="flex flex-col h-screen">
+              <TopBarContainer />
+              
+              <div className="flex flex-1 overflow-hidden">
+                <div className="bg-[#121212] max-w-xs w-[260px] h-full overflow-y-auto hidden md:block border-r border-[#2a2a2a]">
+                  <SideBar />
+                </div>
+
+                <ClientProvider />
+
+                <div className="bg-[#0a0a0a] flex-1 overflow-hidden">{children}</div>
               </div>
-
-              <ClientProvider />
-
-              <div className="bg-gray-900 flex-1 px-3">{children}</div>
             </div>
           )}
         </SessionProvider>

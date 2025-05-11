@@ -17,28 +17,21 @@ function SideBar() {
         orderBy("createdAt", "asc")
       )
   );
+  
   return (
-    <div className=" p-2 flex flex-col h-screen">
-      <div className="flex-1">
-        <div className="space-y-2 h-[88vh] overflow-y-auto scrollbar-hide">
-          <NewChat />
-          {chats?.docs.map((chat) => (
-            <ChatRow key={chat.id} id={chat.id} />
-          ))}
-        </div>
+    <div className="p-3 flex flex-col h-full">
+      <div className="mb-1">
+        <NewChat />
       </div>
-      <div className="">
-        {session && (
-          <div
-            className=" flex items-center my-2 space-x-3 cursor-pointer bg-[#343541] hover:bg-[#3495] rounded-3xl justify-center py-2 px-1 w-full"
-            onClick={() => signOut()}
-          >
-            <img
-              src={session.user?.image!}
-              alt="Profile picture"
-              className="h-8 w-8 rounded-full"
-            />
-            <p className="text-white text-md font-semibold">Sign Out</p>
+      
+      <div className="flex-1 overflow-y-auto scrollbar-hide space-y-1">
+        {chats?.docs.map((chat) => (
+          <ChatRow key={chat.id} id={chat.id} />
+        ))}
+        
+        {chats?.docs.length === 0 && !loading && (
+          <div className="text-center text-gray-500 text-xs mt-4">
+            No conversations yet
           </div>
         )}
       </div>

@@ -4,9 +4,77 @@
 
 @layer components {
   .infoText {
-    @apply p-4 bg-gray-700/50 rounded-lg w-full md:max-w-[300px];
+    @apply p-4 bg-[#1e1e1e] rounded-lg w-full md:max-w-[300px];
   }
   .chatRow {
-    @apply rounded-lg px-5 py-3 text-sm flex items-center justify-center space-x-2 hover:bg-gray-700/70 cursor-pointer text-gray-300 transition-all duration-200 ease-out;
+    @apply rounded-md px-3 py-2 text-xs flex items-center space-x-2 hover:bg-[#1e1e1e] cursor-pointer text-gray-300 transition-all duration-200 ease-out my-1 overflow-hidden;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Dropdown animations */
+  @keyframes dropdownFadeIn {
+    from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  
+  @keyframes dropdownFadeOut {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  }
+  
+  .dropdown-open {
+    animation: dropdownFadeIn 0.2s ease-out forwards;
+  }
+  
+  .dropdown-closed {
+    animation: dropdownFadeOut 0.2s ease-in forwards;
+  }
+  
+  .prose {
+    max-width: 100%;
+  }
+  
+  .prose p {
+    margin-bottom: 0.8em;
+  }
+  
+  .prose code {
+    @apply bg-[#1e1e1e] px-1 py-0.5 rounded text-xs font-mono;
+  }
+  
+  .prose pre {
+    @apply bg-[#1e1e1e] p-3 rounded-md my-3 overflow-x-auto;
+  }
+  
+  .prose ul {
+    @apply pl-0 list-none;
+  }
+  
+  .prose li {
+    @apply my-1;
+  }
+  
+  .prose h2 {
+    @apply text-lg font-bold mt-6 mb-2;
+  }
+  
+  .prose h3 {
+    @apply text-base font-bold mt-4 mb-2;
+  }
+  
+  .prose h4 {
+    @apply text-sm font-bold mt-3 mb-1;
+  }
+  
+  .prose strong {
+    @apply font-bold;
   }
 }

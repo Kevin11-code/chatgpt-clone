@@ -17,14 +17,13 @@ function NewChat() {
       }
     );
     router.push(`/chat/${doc.id}`);
-  };
-  return (
+  };  return (
     <div
       onClick={createNewChat}
-      className="border border-gray-700 chatRow my-3"
+      className="border border-[#2a2a2a] rounded-md px-3 py-2.5 text-xs flex items-center justify-center space-x-2 hover:bg-[#1e1e1e] cursor-pointer text-white transition-all duration-200 ease-out mb-2 w-full"
     >
-      <PlusIcon className="h-4 w-4" />
-      <p>New Chat</p>
+      <PlusIcon className="h-3.5 w-3.5" />
+      <p className="text-xs">New Chat</p>
     </div>
   );
 }
