@@ -1,9 +1,9 @@
-import { Configuration, OpenAIApi } from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize the Google Generative AI with your API key
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-const openai = new OpenAIApi(configuration);
+// Get the generative model (Gemini 2.0 Flash)
+const geminiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-export default openai;
+export default geminiModel;

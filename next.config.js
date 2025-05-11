@@ -2,11 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["links.papareact.com"],
-  },
-  swcMinify: true,
-  experimental: {
-    appDir: true,
+    domains: ["links.papareact.com", "lh3.googleusercontent.com", "ui-avatars.com"],
   },
 };
 

@@ -16,7 +16,7 @@ export default async function RootLayout({
 
   console.log(session);
   return (
-    <html>
+    <html lang="en">
       <head />
       <body>
         <SessionProvider session={session}>
