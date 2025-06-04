@@ -14,7 +14,6 @@ type Props = {
 
 function Chat({ chatId }: Props) {  const { data: session } = useSession();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
   const [messages] = useCollection(
@@ -39,9 +38,11 @@ function Chat({ chatId }: Props) {  const { data: session } = useSession();
     // Check if we should auto-scroll or show scroll button
   useEffect(() => {
     const checkShouldScroll = () => {
-      if (!chatContainerRef.current) return;
+      // Access the parent scroll container
+      const scrollContainer = document.querySelector('.flex-1.overflow-y-auto');
+      if (!scrollContainer) return;
       
-      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      const { scrollTop, scrollHeight, clientHeight } = scrollContainer as HTMLElement;
       const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
       
       setShowScrollButton(!isNearBottom);
@@ -51,47 +52,55 @@ function Chat({ chatId }: Props) {  const { data: session } = useSession();
         scrollToBottom();
       }
     };
-    
-    checkShouldScroll();
+      checkShouldScroll();
     
     // Add scroll event listener to show/hide scroll button
-    const container = chatContainerRef.current;
-    if (container) {
-      container.addEventListener('scroll', checkShouldScroll);
-      return () => container.removeEventListener('scroll', checkShouldScroll);
+    const scrollContainer = document.querySelector('.flex-1.overflow-y-auto');
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', checkShouldScroll);
+      return () => scrollContainer.removeEventListener('scroll', checkShouldScroll);
     }
   }, [messages]);
-  
-  // Listen for message sent event from ChatInput
+    // Listen for message sent event from ChatInput
   useEffect(() => {
     const handleMessageSent = () => {
-      scrollToBottom();
+      // Add slight delay to ensure DOM is updated
+      setTimeout(scrollToBottom, 100);
     };
     
     window.addEventListener('chatMessageSent', handleMessageSent);
-    return () => window.removeEventListener('chatMessageSent', handleMessageSent);
-  }, []);return (
-    <div ref={chatContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-hide pt-4 pb-24">
+    return () => window.removeEventListener('chatMessageSent', handleMessageSent);}, []);return (
+    <div className="h-full pt-4 pb-40">
       {messages?.empty && (
         <div className="flex flex-col items-center justify-center h-full">
-          <p className="text-center text-white text-lg mb-3">
-            Type a prompt below to get started!
-          </p>
-          <ArrowDownCircleIcon className="h-8 w-8 mx-auto text-gray-400 animate-bounce" />
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-xl shadow-xl border border-slate-700/20 max-w-md mx-auto">
+            <h3 className="text-center text-white text-lg font-medium mb-3">
+              Welcome to ChatAI
+            </h3>
+            <p className="text-center text-slate-300 text-sm mb-6">
+              Type a prompt below to start a conversation with ChatAI.
+            </p>
+            <div className="flex justify-center">
+              <ArrowDownCircleIcon className="h-8 w-8 text-emerald-500 animate-bounce" />
+            </div>
+          </div>
         </div>
-      )}<div className="max-w-3xl mx-auto px-4">
+      )}
+      
+      <div className="max-w-3xl mx-auto">
         {messages?.docs.map((message) => (
           <Message key={message.id} message={message.data()} />
         ))}
         {/* This empty div serves as our scroll target */}
-        <div ref={messagesEndRef} />
-      </div>      {/* Scroll to bottom button - appears when not at bottom */}
-      {showScrollButton && messages?.docs && messages.docs.length > 2 && (
+        <div ref={messagesEndRef} className="h-24 mb-4" />
+      </div>
+        {/* Scroll to bottom button - appears when not at bottom */}      {showScrollButton && messages?.docs && messages.docs.length > 2 && (
         <button
           onClick={scrollToBottom}
-          className="fixed bottom-24 right-4 bg-[#121212] hover:bg-[#1e1e1e] text-white p-2 rounded-full shadow-lg transition-opacity z-10"
+          className="fixed bottom-40 right-6 bg-slate-800 hover:bg-slate-700 text-white p-2.5 rounded-full shadow-lg transition-all duration-200 z-10 border border-slate-600 group"
+          aria-label="Scroll to bottom"
         >
-          <ArrowDownCircleIcon className="h-6 w-6" />
+          <ArrowDownCircleIcon className="h-5 w-5 text-slate-200 group-hover:text-white" />
         </button>
       )}
     </div>
