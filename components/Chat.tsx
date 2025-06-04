@@ -70,7 +70,7 @@ function Chat({ chatId }: Props) {  const { data: session } = useSession();
     
     window.addEventListener('chatMessageSent', handleMessageSent);
     return () => window.removeEventListener('chatMessageSent', handleMessageSent);}, []);return (
-    <div className="h-full pt-4 pb-40">
+    <div className="h-full pt-4 pb-52">
       {messages?.empty && (
         <div className="flex flex-col items-center justify-center h-full">
           <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-xl shadow-xl border border-slate-700/20 max-w-md mx-auto">
@@ -94,10 +94,11 @@ function Chat({ chatId }: Props) {  const { data: session } = useSession();
         {/* This empty div serves as our scroll target */}
         <div ref={messagesEndRef} className="h-24 mb-4" />
       </div>
-        {/* Scroll to bottom button - appears when not at bottom */}      {showScrollButton && messages?.docs && messages.docs.length > 2 && (
+        {/* Scroll to bottom button - appears when not at bottom */}
+      {showScrollButton && messages?.docs && messages.docs.length > 2 && (
         <button
           onClick={scrollToBottom}
-          className="fixed bottom-40 right-6 bg-slate-800 hover:bg-slate-700 text-white p-2.5 rounded-full shadow-lg transition-all duration-200 z-10 border border-slate-600 group"
+          className="fixed bottom-48 right-6 bg-slate-800 hover:bg-slate-700 text-white p-2.5 rounded-full shadow-lg transition-all duration-200 z-10 border border-slate-600 group"
           aria-label="Scroll to bottom"
         >
           <ArrowDownCircleIcon className="h-5 w-5 text-slate-200 group-hover:text-white" />

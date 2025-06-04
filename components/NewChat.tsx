@@ -18,13 +18,13 @@ function NewChat() {
     );
     router.push(`/chat/${doc.id}`);
   };  return (
-    <div
+    <button
       onClick={createNewChat}
-      className="border border-[#2a2a2a] rounded-md px-3 py-2.5 text-xs flex items-center justify-center space-x-2 hover:bg-[#1e1e1e] cursor-pointer text-white transition-all duration-200 ease-out mb-2 w-full"
+      className="bg-gradient-to-br from-[#10a37f] to-[#0e8e6d] hover:from-[#0f9973] hover:to-[#0c7f60] rounded-lg px-4 py-3 text-sm flex items-center justify-center space-x-2.5 cursor-pointer text-white transition-all duration-300 ease-out shadow-md shadow-[#10a37f]/10 w-full active:scale-95 transform"
     >
-      <PlusIcon className="h-3.5 w-3.5" />
-      <p className="text-xs">New Chat</p>
-    </div>
+      <PlusIcon className="h-4 w-4" />
+      <span className="font-medium">New Chat</span>
+    </button>
   );
 }
 
